@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, lib, ... }:
+{ config, pkgs, pkgs-unstable, inputs, lib, ... }:
 
 {
   imports = [
@@ -133,8 +133,15 @@
   home-manager = {
     useGlobalPkgs = true;      # home packages use system nixpkgs (no separate eval)
     useUserPackages = true;    # install to /etc/profiles/per-user instead of ~/.nix-profile
-    extraSpecialArgs = { inherit inputs; };
-    users.faraquic = import ../../home/faraquic/default.nix;
+    extraSpecialArgs = {
+      inherit pkgs-unstable;
+      inherit inputs;
+    };
+    users.faraquic = { pkgs, ... }: {
+      imports = [
+        ../../home/faraquic/default.nix
+      ];
+    };
   };
 
   # System packages (minimal — only what root/admin needs)

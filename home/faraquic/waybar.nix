@@ -1,19 +1,20 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-unstable, lib, ... }:
 
 {
   programs.waybar = {
     enable = true;
     # waybar reads WAYLAND_DISPLAY from environment — starts correctly under Hyprland
     systemd.enable = true;
+    package = pkgs-unstable.waybar;
 
     settings = [{
       layer    = "top";
       position = "top";
-      height   = 32;
-      spacing  = 4;
-      margin-top    = 6;
-      margin-left   = 10;
-      margin-right  = 10;
+      height = 36;
+      spacing = 12;
+      margin-top = 8;
+      margin-left = 12;
+      margin-right = 12;
 
       modules-left   = [ "hyprland/workspaces" "hyprland/window" ];
       modules-center = [ "clock" ];
@@ -23,6 +24,7 @@
         "cpu"
         "memory"
         "temperature"
+        "custom/gpu"
         "network"
         "tray"
         "custom/power"
@@ -34,43 +36,31 @@
         on-click        = "activate";
         format          = "{icon}";
         format-icons    = {
-          "1" = "󰲡";
-          "2" = "󰲣";
-          "3" = "󰲥";
-          "4" = "󰲧";
-          "5" = "󰲩";
-          "6" = "󰲫";
-          "7" = "󰲭";
-          "8" = "󰲯";
-          "9" = "󰲱";
-          "urgent"  = "";
-          "focused" = "";
-          "default" = "";
+          "1" = "[1]";
+          "2" = "[2]";
+          "3" = "[3]";
+          "4" = "[4]";
+          "5" = "[5]";
+          "6" = "[6]";
+          "7" = "[7]";
+          "8" = "[8]";
+          "9" = "[9]";
+          "urgent"  = "";
         };
-        persistent-workspaces = {
-          "1" = [];
-          "2" = [];
-          "3" = [];
-          "4" = [];
-          "5" = [];
-        };
+        persistent-workspaces = {};
       };
 
       "hyprland/window" = {
         max-length      = 60;
         separate-outputs = true;
-        rewrite          = {
-          "(.*) - Mozilla Firefox" = "  $1";
-          "(.*) - Visual Studio Code" = "󰨞 $1";
-          "kitty" = " kitty";
-        };
       };
 
       clock = {
         timezone       = "Asia/Yekaterinburg";
-        format         = "  {:%H:%M}";
-        format-alt     = "  {:%Y-%m-%d %H:%M:%S}";
-        tooltip-format = "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>";
+        format         = " {:%H:%M}";
+        format-alt     = " {:%Y-%m-%d %H:%M:%S}";
+        tooltip-format = "<big>{:%A %d %B %Y}</big>\n<tt>{calendar}</tt>";
+        interval       = 60;
         calendar = {
           mode       = "year";
           mode-mon-col = 3;
@@ -87,7 +77,7 @@
       };
 
       "custom/media" = {
-        format = "{icon}  {}";
+        format = " {}";
         return-type = "json";
         max-length  = 40;
         format-icons = {
@@ -101,16 +91,13 @@
       };
 
       pulseaudio = {
-        format            = "{icon}  {volume}%";
-        format-muted      = "󰝟  Muted";
+        format            = "{icon} {volume}%";
+        format-muted      = "󰝟 Muted";
         format-icons = {
           "headphone"      = "󰋋";
           "hands-free"     = "󰋎";
           "headset"        = "󰋎";
-          "phone"          = "";
-          "portable"       = "";
-          "car"            = "";
-          "default"        = [ "" "" "" ];
+          "default"        = [ "󰕿" "󰖀" "󰕾" ];
         };
         on-click          = "${pkgs.pavucontrol}/bin/pavucontrol";
         scroll-step       = 5;
@@ -119,40 +106,45 @@
       };
 
       cpu = {
-        interval = 5;
-        format   = "  {usage}%";
+        interval = 3;
+        format   = "󰍛 {usage}%";
+        format-icons = ["󰾅" "󰾆" "󰓅"];
         tooltip  = true;
-        on-click = "${pkgs.kitty}/bin/kitty --class btop btop";
+        on-click = "${pkgs.kitty}/bin/kitty --class btm btm";
       };
 
       memory = {
-        interval = 10;
-        format   = "  {percentage}%";
-        tooltip-format = "{used:0.1f}G / {total:0.1f}G";
-        on-click = "${pkgs.kitty}/bin/kitty --class btop btop";
+        interval = 5;
+        format   = "󰘚 {percentage}%";
+        tooltip-format = "RAM {used:0.1f}G / {total:0.1f}G";
+        on-click = "${pkgs.kitty}/bin/kitty --class btm btm";
       };
 
       temperature = {
         interval          = 10;
-        critical-threshold = 80;
-        format            = "{icon}  {temperatureC}°C";
-        format-critical   = "  {temperatureC}°C";
-        format-icons      = [ "" "" "" "" "" ];
+        critical-threshold = 85;
+        format            = " {temperatureC}°C";
+      };
+
+      "custom/gpu" =  {
+        interval          = 3;
+        format            = "󰢮 {}%";
+        exec              = "nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits";
+        tooltip           = true;
       };
 
       network = {
         interval          = 5;
-        format-wifi       = "󰤨  {signalStrength}%";
-        format-ethernet   = "󰈀  {ipaddr}";
-        format-disconnected = "󰤭  Offline";
+        format-wifi       = "  {signalStrength}%";
+        format-ethernet   = "󰈀 {ipaddr}";
+        format-disconnected = "󰤮 Offline";
         format-linked     = "󰈀  (no IP)";
         tooltip-format    = "󰈀 {ifname}\n󰩟 {ipaddr}/{cidr}\n  {gwaddr}\n  {bandwidthUpBits}  {bandwidthDownBits}";
-        on-click          = "${pkgs.networkmanagerapplet}/bin/nm-connection-editor";
       };
 
       tray = {
-        icon-size  = 16;
-        spacing    = 8;
+        icon-size  = 22;
+        spacing    = 10;
         show-passive-items = true;
       };
 
@@ -165,110 +157,172 @@
 
     style = ''
       /* Catppuccin Macchiato */
-      @define-color base    #24273a;
-      @define-color mantle  #1e2030;
+
+      @define-color base #24273a;
+      @define-color mantle #1e2030;
       @define-color surface0 #363a4f;
       @define-color surface1 #494d64;
       @define-color overlay0 #6e738d;
-      @define-color text    #cad3f5;
-      @define-color subtext1 #b8c0e0;
-      @define-color subtext0 #a5adcb;
-      @define-color teal    #8bd5ca;
-      @define-color mauve   #c6a0f6;
-      @define-color blue    #8aadf4;
-      @define-color red     #ed8796;
-      @define-color yellow  #eed49f;
-      @define-color peach   #f5a97f;
+
+      @define-color text #cad3f5;
+      @define-color subtext #b8c0e0;
+
+      @define-color blue #8aadf4;
+      @define-color teal #8bd5ca;
+      @define-color mauve #c6a0f6;
+      @define-color red #ed8796;
+      @define-color yellow #eed49f;
+      @define-color peach #f5a97f;
+
+      /* GLOBAL */
 
       * {
-        font-family: "JetBrainsMono Nerd Font Mono";
-        font-size: 13px;
+        font-family: "JetBrainsMono Nerd Font";
+        font-size: 17px;
         border: none;
         border-radius: 0;
         min-height: 0;
       }
 
+      /* BAR */
+
       window#waybar {
-        background-color: transparent;
+        background: transparent;
         color: @text;
       }
+
+      /* MODULE CONTAINERS */
 
       .modules-left,
       .modules-center,
       .modules-right {
-        background-color: alpha(@base, 0.9);
-        border-radius: 10px;
-        padding: 0 6px;
-        margin: 0 4px;
+        background: rgba(36, 39, 58, 0.55);
+        border-radius: 14px;
+        padding: 6px 14px;
+        margin: 0 6px;
       }
 
-      /* Workspaces */
+      /* WORKSPACES */
+
       #workspaces {
-        background-color: transparent;
-        padding: 0 4px;
+        background: transparent;
       }
+
       #workspaces button {
         color: @overlay0;
-        padding: 0 6px;
-        border-radius: 8px;
-        transition: all 0.2s ease;
+        padding: 6px 12px;
+        margin: 0 4px;
+        border-radius: 10px;
+        transition: all 0.25s cubic-bezier(.4,0,.2,1);
       }
+
       #workspaces button:hover {
-        background-color: @surface1;
+        background: @surface1;
         color: @text;
       }
+
       #workspaces button.active {
-        background-color: @teal;
+        background: @teal;
         color: @base;
         font-weight: bold;
       }
+
       #workspaces button.urgent {
-        background-color: @red;
+        background: @red;
         color: @base;
       }
 
-      /* Window title */
+      /* WINDOW TITLE */
+
       #window {
-        color: @subtext1;
-        padding: 0 8px;
+        padding: 0 14px;
+        color: @subtext;
         font-style: italic;
       }
 
-      /* Clock */
+      /* CLOCK */
+
       #clock {
-        color: @blue;
         font-weight: bold;
-        padding: 0 12px;
+        color: @blue;
+        padding: 0 18px;
       }
 
-      /* Modules */
-      #pulseaudio, #cpu, #memory, #temperature,
-      #network, #tray, #custom-media, #custom-power {
-        padding: 0 10px;
-        color: @text;
+      /* MODULES */
+
+      #pulseaudio,
+      #cpu,
+      #memory,
+      #temperature,
+      #network,
+      #tray,
+      #custom-media,
+      #custom-power,
+      #custom-gpu {
+        padding: 0 14px;
       }
 
-      #pulseaudio { color: @teal; }
-      #pulseaudio.muted { color: @overlay0; }
-      #cpu { color: @yellow; }
-      #memory { color: @mauve; }
-      #temperature { color: @peach; }
-      #temperature.critical { color: @red; }
-      #network { color: @blue; }
-      #network.disconnected { color: @red; }
+      /* COLORS */
+
+      #pulseaudio {
+        color: @teal;
+      }
+
+      #pulseaudio.muted {
+        color: @overlay0;
+      }
+
+      #cpu {
+        color: @yellow;
+      }
+
+      #memory {
+        color: @mauve;
+      }
+
+      #temperature {
+        color: @peach;
+      }
+
+      #temperature.critical {
+        color: @red;
+      }
+
+      #network {
+        color: @blue;
+      }
+
+      #network.disconnected {
+        color: @red;
+      }
 
       #custom-media {
         color: @teal;
         font-style: italic;
       }
+
+      /* POWER BUTTON */
+
       #custom-power {
+        font-size: 18px;
         color: @red;
-        font-size: 15px;
-        padding: 0 12px;
-        cursor: pointer;
+        padding-right: 10px;
       }
-      #tray > .passive { -gtk-icon-effect: dim; }
-      #tray > .needs-attention { -gtk-icon-effect: highlight; color: @peach; }
+
+      /* TRAY */
+
+      #tray {
+        padding: 0 10px;
+      }
+
+      #tray > .passive {
+        -gtk-icon-effect: dim;
+      }
+
+      #tray > .needs-attention {
+        -gtk-icon-effect: highlight;
+        color: @peach;
+      }
     '';
   };
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, lib, ... }:
+{ config, pkgs, pkgs-unstable, inputs, lib, ... }:
 
 {
   imports = [
@@ -23,13 +23,12 @@
     tmux
     eza fd ripgrep fzf bat delta jq
     glow duf dust bottom procs gping dogdns tealdeer sd choose xh zoxide
-    ouch
+    ouch inxi
 
     # Desktop utilities
     brightnessctl
     playerctl
     pavucontrol
-    networkmanagerapplet
     libnotify
 
     # Screenshots & recording

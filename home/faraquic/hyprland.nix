@@ -58,6 +58,8 @@ in
           enabled  = true
           size     = 8
           passes   = 2
+          new_optimizations = true
+          xray = true
           vibrancy = 0.17
         }
 
@@ -99,11 +101,6 @@ in
         accel_profile = flat
       }
 
-      # Gestures
-      gestures {
-        workspace_swipe = false
-      }
-
       # Misc
       misc {
         force_default_wallpaper = 0
@@ -122,12 +119,16 @@ in
       bind = $mod,       V,      togglefloating
       bind = $mod,       F,      fullscreen
       bind = $mod,       P,      pseudo
-      bind = $mod,       J,      togglesplit
+
+      # Special workspace
+      bind = $mod,       S,      togglespecialworkspace
+      bind = $mod SHIFT, S,      movetoworkspace, special
 
       # Launcher
       bind = $mod,       R,      exec, rofi -show drun
       bind = $mod,       Tab,    exec, rofi -show window
       bind = $mod,       X,      exec, rofi -show run
+      
       # Clipboard history via rofi
       bind = $mod,       C,      exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
 
@@ -182,18 +183,18 @@ in
         bind = $mod SHIFT, ${toString n}, movetoworkspace, ${toString n}
       '') (lib.range 1 9))}
 
-      # Window rules
-      windowrulev2 = float,       class:^(pavucontrol)$
-      windowrulev2 = float,       class:^(nm-connection-editor)$
-      windowrulev2 = float,       class:^(nwg-look)$
-      windowrulev2 = float,       title:^(Picture-in-Picture)$
-      windowrulev2 = size 900 600, class:^(pavucontrol)$
+      # Window Rules
+      windowrule = float on, match:class ^(pavucontrol)$
+      windowrule = float on, match:class ^(nm-connection-editor)$
+      windowrule = float on, match:class ^(nwg-look)$
+      windowrule = float on, match:title ^(Picture-in-Picture)$
+      windowrule = size 900 600, match:class ^(pavucontrol)$
 
-      # Fix for xdg-desktop-portal screen sharing
-      windowrulev2 = opacity 0.0 override, class:^(xwaylandvideobridge)$
-      windowrulev2 = noanim,              class:^(xwaylandvideobridge)$
-      windowrulev2 = noinitialfocus,      class:^(xwaylandvideobridge)$
-      windowrulev2 = nofocus,             class:^(xwaylandvideobridge)$
+      # Fix for screen sharing (xwaylandvideobridge)
+      windowrule = opacity 0.0 override, match:class ^(xwaylandvideobridge)$
+      windowrule = no_anim on, match:class ^(xwaylandvideobridge)$
+      windowrule = no_initial_focus on, match:class ^(xwaylandvideobridge)$
+      windowrule = no_focus on, match:class ^(xwaylandvideobridge)$
     '';
   };
 
