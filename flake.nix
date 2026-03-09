@@ -15,10 +15,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+
     hyprland.url = "github:hyprwm/Hyprland";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, disko, home-manager, hyprland, ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, disko, home-manager, sops-nix, hyprland, ... }@inputs:
   let
     system = "x86_64-linux";
     pkgs-unstable = import nixpkgs-unstable {
@@ -32,6 +38,7 @@
       specialArgs = { inherit inputs pkgs-unstable; };
       modules = [
         { nixpkgs.hostPlatform = system; }
+        sops-nix.nixosModules.sops
         disko.nixosModules.disko
         home-manager.nixosModules.home-manager
         ./disko.nix

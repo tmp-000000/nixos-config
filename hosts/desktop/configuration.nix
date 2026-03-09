@@ -7,6 +7,7 @@
     ../../modules/hyprland.nix
     ../../modules/gaming.nix
     ../../modules/development.nix
+    ../../modules/secrets.nix
   ];
 
   # Bootloader

@@ -1,0 +1,8 @@
+keys:
+  - &desktop age1dl7z744ngx0z7x9derwlts5r4stcmkeytsflll0pp5msey8lfy7se5cpn8
+ 
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *desktop
