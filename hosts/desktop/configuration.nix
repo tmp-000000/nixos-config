@@ -82,18 +82,15 @@
     hostName = "nixos";
     networkmanager.enable = true;
     networkmanager.dns = "systemd-resolved";
-    firewall.enable = true;
+    firewall.enable = false;
   };
 
   services.resolved = {
     enable = true;
-    dnssec = "allow-downgrade";
     llmnr = "false";
     extraConfig = ''
-      DNS=178.46.167.178#dns.faraquic.tech
-      FallbackDNS=1.1.1.1#cloudflare-dns.com
-      DNSOverTLS=yes
-      Domains=~.
+      DNS=172.18.0.2
+      FallbackDNS=178.46.167.178#dns.faraquic.tech,1.1.1.1
     '';
   };
 
@@ -183,33 +180,15 @@
     wireplumber.enable = true;
   };
 
-  # Thunar
-  programs.thunar = {
-    enable = true;
-    plugins = with pkgs.xfce; [
-      thunar-archive-plugin
-      thunar-volman
-    ];
-  };
-  services.gvfs.enable = true;   # virtual filesystem (MTP, SMB, trash, etc.)
-  services.tumbler.enable = true; # thumbnail service for Thunar
-
   # Nix settings
   nix.settings = {
+    fallback = true;
     experimental-features = [ "nix-command" "flakes" ];
     auto-optimise-store = true;
     max-jobs = "auto";
     cores = 0;
-    substituters = [
-      "https://cache.nixos.org"
-      "https://nix-community.cachix.org"
-      "https://hyprland.cachix.org"
-    ];
-    trusted-public-keys = [
-      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-    ];
+    substituters = [ "https://cache.nixos.org" ];
+    trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
   };
 
   nix.gc = {

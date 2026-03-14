@@ -48,6 +48,7 @@
     wayland-utils
     xwayland
     wl-clipboard
+    hyprpaper
     qt5.qtwayland
     qt6.qtwayland
   ];

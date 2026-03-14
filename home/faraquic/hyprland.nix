@@ -30,12 +30,16 @@ in
 
       # Autostart
       # Services managed by systemd (home-manager) start automatically:
-      # waybar, dunst, hypridle, hyprpaper, wlsunset, avizo
-      exec-once = nm-applet --indicator
+      # waybar, dunst, hypridle, hyprpaper, wlsunset
       exec-once = wl-paste --type text  --watch cliphist store
       exec-once = wl-paste --type image --watch cliphist store
       exec-once = wl-clip-persist --clipboard both
       exec-once = ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
+      exec-once = hyprpaper
+      exec-once = v2rayN
+      exec-once = discord
+      exec-once = AyuGram
+      exec-once = steam
 
       # General
       general {
@@ -114,22 +118,25 @@ in
       # Core
       bind = $mod,       Return, exec, kitty
       bind = $mod,       Q,      killactive
-      bind = $mod SHIFT, Q,      exit
-      bind = $mod,       E,      exec, thunar
       bind = $mod,       V,      togglefloating
       bind = $mod,       F,      fullscreen
-      bind = $mod,       P,      pseudo
+      bind = $mod SHIFT, Q,      exit
+
+      # Programs
+      bind = $mod,       E,      exec,     kitty --class yazi yazi
+      bind = $mod,       F,      exec,     firefox
+      bind = $mod,       T,      exec,     AyuGram
+      bind = $mod SHIFT, D,      exec,     discord
+
+      bind = $mod SHIFT, K,      exec,     keepassxc ~/Documents/kpssxcdb.kdbx
 
       # Special workspace
       bind = $mod,       S,      togglespecialworkspace
       bind = $mod SHIFT, S,      movetoworkspace, special
 
       # Launcher
-      bind = $mod,       R,      exec, rofi -show drun
-      bind = $mod,       Tab,    exec, rofi -show window
+      bind = $mod,       D,      exec, rofi -show drun
       bind = $mod,       X,      exec, rofi -show run
-      
-      # Clipboard history via rofi
       bind = $mod,       C,      exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
 
       # Lock / logout
@@ -140,26 +147,19 @@ in
       bind = $mod SHIFT, C,      exec, hyprpicker -a
 
       # Screenshot
-      bind = ,           Print,  exec, grim -g "$(slurp)" - | swappy -f -
-      bind = $mod,       Print,  exec, grim - | swappy -f -
-      bind = $mod SHIFT, Print,  exec, grim -g "$(slurp)" - | wl-copy
+      bind = ,           Print,  exec, grim -g "$(slurp)" - | wl-copy
+      bind = $mod,       Print,  exec, grim - | wl-copy
+      bind = $mod SHIFT, Print,  exec, grim -g "$(slurp)" - | swappy -f -
 
-      # Screen recorder (toggle)
-      bind = $mod SHIFT, R,      exec, wl-screenrec -o ~/Videos/recording-$(date +%Y%m%d-%H%M%S).mp4 || pkill wl-screenrec
-
+      # Setting output device
+      bind = $mod, O, exec, wpctl set-default 46; notify-send "Audio → Headset"
+      bind = $mod SHIFT, O, exec, wpctl set-default 74; notify-send "Audio → Speakers"
+      bind = $mod SHIFT, P, exec, pavucontrol
+      
       # Volume (using wpctl + avizo OSD)
-      binde = , XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+ && volumectl up
-      binde = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && volumectl down
-      bind  = , XF86AudioMute,        exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-
-      # Brightness (using brightnessctl + avizo OSD)
-      binde = , XF86MonBrightnessUp,   exec, brightnessctl set +5% && lightctl up
-      binde = , XF86MonBrightnessDown, exec, brightnessctl set 5%-  && lightctl down
-
-      # Media
-      bind = , XF86AudioPlay,  exec, playerctl play-pause
-      bind = , XF86AudioNext,  exec, playerctl next
-      bind = , XF86AudioPrev,  exec, playerctl previous
+      binde = $mod, F1, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+ && volumectl up
+      binde = $mod, F2, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && volumectl down
+      bind  = $mod, F4,       exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
       # Focus
       bind = $mod, left,  movefocus, l
@@ -189,6 +189,7 @@ in
       windowrule = float on, match:class ^(nwg-look)$
       windowrule = float on, match:title ^(Picture-in-Picture)$
       windowrule = size 900 600, match:class ^(pavucontrol)$
+      windowrule = match:class ^(v2rayN)$, workspace 9 silent
 
       # Fix for screen sharing (xwaylandvideobridge)
       windowrule = opacity 0.0 override, match:class ^(xwaylandvideobridge)$

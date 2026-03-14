@@ -37,10 +37,13 @@
       specialArgs = { inherit inputs pkgs-unstable; };
       modules = [
         { nixpkgs.hostPlatform = system; }
-        sops-nix.nixosModules.sops
+        
         disko.nixosModules.disko
-        home-manager.nixosModules.home-manager
         ./disko.nix
+
+        home-manager.nixosModules.home-manager
+        sops-nix.nixosModules.sops
+
         ./hosts/desktop/configuration.nix
       ];
     };

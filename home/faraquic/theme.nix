@@ -6,18 +6,18 @@
     enable = true;
 
     theme = {
-      name    = "catppuccin-macchiato-teal-standard";
+      name = "catppuccin-macchiato-teal-standard";
       package = pkgs.catppuccin-gtk.override {
+        variant = "macchiato";
         accents = [ "teal" ];
         size    = "standard";
         tweaks  = [ "normal" ];
-        variant = "macchiato";
       };
     };
 
     iconTheme = {
-      name    = "Colloid-teal-dark";
       package = pkgs.colloid-icon-theme;
+      name    = "Colloid-teal-dark";
     };
 
     cursorTheme = {
@@ -44,8 +44,8 @@
     enable = true;
     platformTheme.name = "gtk";   # use GTK theme for Qt too
     style = {
-      name    = "adwaita-dark";
-      package = pkgs.adwaita-qt;
+      name = "adwaita-dark";
+      package = pkgs.qt6Packages.qt6ct;
     };
   };
 
@@ -54,8 +54,8 @@
     name    = "catppuccin-macchiato-dark-cursors";
     package = pkgs.catppuccin-cursors.macchiatoDark;
     size    = 24;
-    gtk.enable  = true;
-    x11.enable  = true;
+    gtk.enable = true;
+    x11.enable = true;
   };
 
   # Icon pack: Numix Circle (secondary — for apps without Colloid icons)
