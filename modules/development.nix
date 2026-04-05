@@ -8,6 +8,8 @@
     uv
 
     docker-compose  # CLI only — works with Podman socket via dockerCompat
+
+    pkgs-unstable.gcc pkgs-unstable.clang pkgs-unstable.clang-tools pkgs-unstable.lld
   ];
 
   # Podman

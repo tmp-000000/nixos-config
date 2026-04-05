@@ -32,6 +32,12 @@
   outputs = { self, nixpkgs, nixpkgs-unstable, disko, home-manager, sops-nix, hyprland, ... }@inputs:
   let
     system = "x86_64-linux";
+
+    pkgs = import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    };
+
     pkgs-unstable = import nixpkgs-unstable {
       inherit system;
       config.allowUnfree = true;
@@ -55,6 +61,22 @@
 
         ./hosts/desktop/configuration.nix
       ];
+    };
+
+    devShells.${system}.default = pkgs.mkShell {
+      buildInputs = with pkgs; [
+        pkgs-unstable.rustc
+        pkgs-unstable.cargo
+        pkgs-unstable.rust-analyzer
+        pkgs-unstable.rustfmt
+        pkgs-unstable.clippy
+        pkgs-unstable.pkg-config
+        pkgs-unstable.clang
+        pkgs-unstable.lld
+        openssl
+      ];
+
+      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
     };
 
     formatter.x86_64-linux = nixpkgs.legacyPackages.${system}.nixfmt-rfc-style;

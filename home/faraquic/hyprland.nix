@@ -23,6 +23,7 @@ in
       # NVIDIA env (duplicated here for Hyprland's own env system)
       env = LIBVA_DRIVER_NAME,nvidia
       env = GBM_BACKEND,nvidia-drm
+      
       env = __GLX_VENDOR_LIBRARY_NAME,nvidia
       env = WLR_NO_HARDWARE_CURSORS,1
       env = XCURSOR_SIZE,24
@@ -35,7 +36,6 @@ in
       exec-once = wl-paste --type image --watch cliphist store
       exec-once = wl-clip-persist --clipboard both
       exec-once = ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
-      exec-once = podman compose -f ~/.local/share/dashy/docker-compose.dashy.yml up -d --pull always
       exec-once = hyprpaper
       exec-once = v2rayN
       exec-once = discord
